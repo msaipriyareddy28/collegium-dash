@@ -97,8 +97,12 @@ const Events = () => {
 
       {/* Events Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {events.map((event) => (
-          <Card key={event.id} className="card-shadow border-0 hover:shadow-2xl transition-all duration-300 group">
+        {events.map((event, index) => (
+          <Card 
+            key={event.id} 
+            className="card-shadow border-0 hover:shadow-2xl transition-all duration-300 group animate-fade-in hover-scale"
+            style={{ animationDelay: `${index * 0.05}s` }}
+          >
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex-1">

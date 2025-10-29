@@ -123,4 +123,14 @@ All colors MUST be HSL.
   .card-shadow {
     box-shadow: var(--shadow-elegant);
   }
+  
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+  
+  /* Ensure dropdowns have proper z-index and background */
+  [role="menu"],
+  [role="listbox"] {
+    @apply z-50 bg-card;
+  }
 }

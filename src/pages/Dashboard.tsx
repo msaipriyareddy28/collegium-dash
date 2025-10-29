@@ -60,8 +60,12 @@ const Dashboard = () => {
 
       {/* Stats Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.title} className="card-shadow border-0 hover:shadow-2xl transition-all duration-300">
+        {stats.map((stat, index) => (
+          <Card 
+            key={stat.title} 
+            className="card-shadow border-0 hover:shadow-2xl transition-all duration-300 animate-fade-in hover-scale"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.title}

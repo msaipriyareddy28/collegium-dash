@@ -1,4 +1,4 @@
-import { Bell, Plus, Menu, User } from "lucide-react";
+import { Bell, Menu, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import {
@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
+import CreateEventDialog from "./CreateEventDialog";
 
 interface TopbarProps {
   onMenuClick: () => void;
@@ -30,10 +31,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
       <div className="flex-1" />
 
       {/* Create Event Button */}
-      <Button className="bg-gradient-primary hover:opacity-90 transition-opacity shadow-lg">
-        <Plus className="w-4 h-4 mr-2" />
-        Create Event
-      </Button>
+      <CreateEventDialog />
 
       {/* Notifications */}
       <DropdownMenu>
