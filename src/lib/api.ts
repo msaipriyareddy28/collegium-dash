@@ -28,6 +28,14 @@ export const apiCall = async (
     headers["Authorization"] = `Bearer ${token}`;
   }
 
+  // Log outgoing request
+  console.log("🚀 API Request:", {
+    endpoint: `${API_BASE_URL}${endpoint}`,
+    method: options.method || "GET",
+    body: options.body ? JSON.parse(options.body as string) : null,
+    hasToken: !!token
+  });
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
@@ -35,7 +43,20 @@ export const apiCall = async (
 
   const data = await response.json();
 
+  // Log incoming response
+  console.log("✅ API Response:", {
+    endpoint: `${API_BASE_URL}${endpoint}`,
+    status: response.status,
+    ok: response.ok,
+    data
+  });
+
   if (!response.ok) {
+    console.error("❌ API Error:", {
+      endpoint: `${API_BASE_URL}${endpoint}`,
+      status: response.status,
+      error: data.error || "An error occurred"
+    });
     throw new Error(data.error || "An error occurred");
   }
 
