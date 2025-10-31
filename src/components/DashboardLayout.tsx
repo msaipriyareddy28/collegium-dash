@@ -1,10 +1,18 @@
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
 const DashboardLayout = () => {
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const currentAdmin = localStorage.getItem("currentAdmin");
+    if (!currentAdmin) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   return (
     <div className="flex min-h-screen w-full bg-background">

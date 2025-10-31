@@ -1,6 +1,8 @@
-import { Bell, Menu, User } from "lucide-react";
+import { Bell, Menu, User, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +19,14 @@ interface TopbarProps {
 }
 
 const Topbar = ({ onMenuClick }: TopbarProps) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("currentAdmin");
+    toast.success("Logged out successfully");
+    navigate("/login");
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 px-6">
       <Button
@@ -91,7 +101,15 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
           <DropdownMenuItem>Profile</DropdownMenuItem>
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-destructive">
+          <DropdownMenuItem 
+            className="text-destructive cursor-pointer"
+            onClick={() => {
+              localStorage.removeItem("currentAdmin");
+              toast.success("Logged out successfully");
+              window.location.href = "/login";
+            }}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
             Log out
           </DropdownMenuItem>
         </DropdownMenuContent>
