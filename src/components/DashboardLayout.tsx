@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import { getAuthToken } from "@/lib/api";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
-    const currentAdmin = localStorage.getItem("currentAdmin");
-    if (!currentAdmin) {
+    const token = getAuthToken();
+    if (!token) {
       navigate("/login");
     }
   }, [navigate]);

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { z } from "zod";
+import { loginAdmin, setAuthToken } from "@/lib/api";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -29,24 +30,15 @@ const Login = () => {
     try {
       const validated = loginSchema.parse(formData);
       
-      // Check credentials
-      const existingUsers = JSON.parse(localStorage.getItem("adminUsers") || "[]");
-      const user = existingUsers.find(
-        (u: any) => u.email === validated.email && u.password === validated.password
-      );
-
-      if (!user) {
-        toast.error("Invalid email or password");
-        setIsLoading(false);
-        return;
-      }
-
-      // Set current user
-      localStorage.setItem("currentAdmin", JSON.stringify({
-        id: user.id,
-        email: user.email,
-        collegeName: user.collegeName
-      }));
+      // Call API to login
+      const response = await loginAdmin({
+        email: validated.email,
+        password: validated.password,
+      });
+      
+      // Store token and admin data
+      setAuthToken(response.token);
+      localStorage.setItem("currentAdmin", JSON.stringify(response.admin));
       
       toast.success("Login successful!");
       navigate("/");
@@ -59,6 +51,8 @@ const Login = () => {
           }
         });
         setErrors(fieldErrors);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
       }
     } finally {
       setIsLoading(false);

@@ -13,6 +13,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
 import CreateEventDialog from "./CreateEventDialog";
+import { clearAuthToken } from "@/lib/api";
 
 interface TopbarProps {
   onMenuClick: () => void;
@@ -22,7 +23,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("currentAdmin");
+    clearAuthToken();
     toast.success("Logged out successfully");
     navigate("/login");
   };
@@ -104,7 +105,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
           <DropdownMenuItem 
             className="text-destructive cursor-pointer"
             onClick={() => {
-              localStorage.removeItem("currentAdmin");
+              clearAuthToken();
               toast.success("Logged out successfully");
               window.location.href = "/login";
             }}

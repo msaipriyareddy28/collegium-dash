@@ -11,14 +11,17 @@ import { Plus, CalendarIcon, Upload } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { createEvent } from "@/lib/api";
 
 interface CreateEventDialogProps {
   trigger?: React.ReactNode;
+  onEventCreated?: () => void;
 }
 
-const CreateEventDialog = ({ trigger }: CreateEventDialogProps) => {
+const CreateEventDialog = ({ trigger, onEventCreated }: CreateEventDialogProps) => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date>();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     location: "",
@@ -27,7 +30,7 @@ const CreateEventDialog = ({ trigger }: CreateEventDialogProps) => {
     maxParticipants: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.title || !date || !formData.location || !formData.category) {
@@ -35,23 +38,43 @@ const CreateEventDialog = ({ trigger }: CreateEventDialogProps) => {
       return;
     }
 
-    // Here you would typically send the data to your backend
-    console.log("Creating event:", { ...formData, date });
-    
-    toast.success("Event created successfully!", {
-      description: `${formData.title} has been scheduled for ${format(date, "PPP")}`,
-    });
-    
-    // Reset form
-    setFormData({
-      title: "",
-      location: "",
-      category: "",
-      description: "",
-      maxParticipants: "",
-    });
-    setDate(undefined);
-    setOpen(false);
+    setIsLoading(true);
+    try {
+      await createEvent({
+        title: formData.title,
+        date: date.toISOString(),
+        category: formData.category,
+        location: formData.location,
+        maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : undefined,
+        description: formData.description,
+      });
+      
+      toast.success("Event created successfully!", {
+        description: `${formData.title} has been scheduled for ${format(date, "PPP")}`,
+      });
+      
+      // Reset form
+      setFormData({
+        title: "",
+        location: "",
+        category: "",
+        description: "",
+        maxParticipants: "",
+      });
+      setDate(undefined);
+      setOpen(false);
+      
+      // Refresh events list
+      if (onEventCreated) {
+        onEventCreated();
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -199,8 +222,9 @@ const CreateEventDialog = ({ trigger }: CreateEventDialogProps) => {
             <Button
               type="submit"
               className="flex-1 bg-gradient-primary hover:opacity-90 transition-opacity"
+              disabled={isLoading}
             >
-              Create Event
+              {isLoading ? "Creating..." : "Create Event"}
             </Button>
           </div>
         </form>

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { z } from "zod";
+import { registerAdmin } from "@/lib/api";
 
 const registerSchema = z.object({
   collegeName: z.string().min(3, "College name must be at least 3 characters"),
@@ -36,25 +37,13 @@ const Register = () => {
     try {
       const validated = registerSchema.parse(formData);
       
-      // Check if user already exists
-      const existingUsers = JSON.parse(localStorage.getItem("adminUsers") || "[]");
-      if (existingUsers.find((u: any) => u.email === validated.email)) {
-        toast.error("An account with this email already exists");
-        setIsLoading(false);
-        return;
-      }
-
-      // Save user
-      const newUser = {
-        id: Date.now().toString(),
+      // Call API to register
+      await registerAdmin({
         collegeName: validated.collegeName,
         email: validated.email,
         password: validated.password,
-        createdAt: new Date().toISOString()
-      };
-      
-      existingUsers.push(newUser);
-      localStorage.setItem("adminUsers", JSON.stringify(existingUsers));
+        confirmPassword: validated.confirmPassword,
+      });
       
       toast.success("Registration successful! Please login.");
       navigate("/login");
@@ -67,6 +56,8 @@ const Register = () => {
           }
         });
         setErrors(fieldErrors);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
       }
     } finally {
       setIsLoading(false);
